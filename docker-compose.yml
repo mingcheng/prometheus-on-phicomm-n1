@@ -1,0 +1,56 @@
+###
+# File: docker-compose.yml
+# Author: Ming Cheng<mingcheng@outlook.com>
+#
+# Created Date: Friday, June 28th 2019, 7:14:17 am
+# Last Modified: Monday, July 1st 2019, 5:46:20 pm
+#
+# http://www.opensource.org/licenses/MIT
+###
+
+version: "2"
+
+volumes:
+  prometheus-storage:
+  grafana-storage:
+  grafana-provisioning:
+
+services:
+  prometheus:
+    image: prom/prometheus-linux-arm64:v2.10.0
+    container_name: prometheus
+    hostname: prometheus
+    user: "root"
+    restart: unless-stopped
+    volumes:
+      - /etc/hosts:/etc/hosts:ro
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./targets.json:/prometheus-targets.json:ro
+      - prometheus-storage:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--web.console.libraries=/etc/prometheus/console_libraries"
+      - "--web.console.templates=/etc/prometheus/consoles"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=2y"
+      - "--storage.tsdb.retention.size=48GB"
+      - "--web.enable-lifecycle"
+    ports:
+      - 9090:9090
+
+  grafana:
+    image: grafana/grafana:6.2.5
+    container_name: grafana
+    hostname: grafana
+    user: "root"
+    restart: unless-stopped
+    links:
+      - prometheus
+    volumes:
+      - /etc/hosts:/etc/hosts:ro
+      - grafana-storage:/var/lib/grafana
+      - grafana-provisioning:/etc/grafana/provisioning
+    ports:
+      - 3000:3000
+    depends_on:
+      - prometheus

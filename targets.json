@@ -1,0 +1,16 @@
+[
+  {
+    "targets": ["raspberry:9100"],
+    "labels": {
+      "job": "raspberry",
+      "env": "prod"
+    }
+  },
+  {
+    "targets": ["raspberry:9101"],
+    "labels": {
+      "job": "haproxy",
+      "env": "prod"
+    }
+  }
+]

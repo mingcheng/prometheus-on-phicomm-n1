@@ -1,0 +1,34 @@
+###
+# File: prometheus.yml
+# Author: Ming Cheng<mingcheng@outlook.com>
+#
+# Created Date: Friday, June 28th 2019, 7:16:07 am
+# Last Modified: Monday, July 1st 2019, 5:35:22 pm
+#
+# http://www.opensource.org/licenses/MIT
+###
+
+global:
+  scrape_interval: 60s
+  evaluation_interval: 60s
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]
+        labels:
+          instance: prometheus
+
+  - job_name: phicomm
+    static_configs:
+      - targets: ["localhost:9100"]
+        labels:
+          instance: phicomm
+
+  - job_name: "dummy" # This is a default value, it is mandatory.
+    scheme: "http"
+    scrape_timeout: 5s
+    scrape_interval: 60s
+    file_sd_configs:
+      - files:
+          - /prometheus-targets.json
